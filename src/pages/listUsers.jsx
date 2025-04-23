@@ -1,21 +1,29 @@
 import { useState, useEffect } from "react";
-import {
-  Table, TableContainer, TableHead, TableBody,
-  TableRow, TableCell, Paper, Button,
-  IconButton, Snackbar
-} from "@mui/material";
-import Alert from "@mui/material/Alert";
-import { Link, useNavigate } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
+// Imports para criação de tabela
+import Table from "@mui/material/Table";
+import TableContainer from "@mui/material/TableContainer";
+// TableHead é onde colocamos os titulos
+import TableHead from "@mui/material/TableHead";
+// TableBody é onde colocamos o conteúdo
+import TableBody from "@mui/material/TableBody";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import Paper from "@mui/material/Paper";
 import api from "../axios/axios";
+import { Button, IconButton, Alert, Snackbar } from "@mui/material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Link, useNavigate } from "react-router-dom";
 
 function ListUsers() {
   const [users, setUsers] = useState([]);
   const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
-  const navigate = useNavigate();
 
   const showAlert = (severity, message) => setAlert({ open: true, severity, message });
+  
   const handleCloseAlert = () => setAlert({ ...alert, open: false });
+  
+  const navigate = useNavigate();
 
   async function getUsers() {
     try {
@@ -51,7 +59,7 @@ function ListUsers() {
       <TableCell align="center">{user.email}</TableCell>
       <TableCell align="center">{user.cpf}</TableCell>
       <TableCell align="center">
-        <IconButton onClick={() => deleteUser(user.id)}>
+        <IconButton onClick={() => deleteUser(user.id_usuario)}>
           <DeleteIcon color="error" />
         </IconButton>
       </TableCell>
@@ -91,6 +99,10 @@ function ListUsers() {
           </TableContainer>
           <Button fullWidth variant="contained" component={Link} to="/" onClick={logout}>
             SAIR
+          </Button>
+
+          <Button fullWidth variant="contained" component={Link} to="/events" >
+            Ir para lista de eventos 
           </Button>
         </div>
       )}
