@@ -14,16 +14,27 @@ import { Button, IconButton, Alert, Snackbar } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link, useNavigate } from "react-router-dom";
+import ConfirmDelete from "../components/ConfirmDelete";
 
 function ListUsers() {
   const [users, setUsers] = useState([]);
   const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
 
+  
+  const navigate = useNavigate();
+  
+  const [userToDelete, setUserToDelete] = useState("");
+
+  const [modalOpen, setModalOpen] = useState(false);
+
   const showAlert = (severity, message) => setAlert({ open: true, severity, message });
   
   const handleCloseAlert = () => setAlert({ ...alert, open: false });
-  
-  const navigate = useNavigate();
+
+  const openDeleteModal = (id, name)=> {
+    setUserToDelete({ id: id, name: name });
+    setModalOpen(true);
+  }
 
   async function getUsers() {
     try {
@@ -34,13 +45,15 @@ function ListUsers() {
     }
   }
 
-  async function deleteUser(id) {
+  async function deleteUser() {
     try {
-      await api.deleteUser(id);
+      await api.deleteUser(userToDelete.id);
       await getUsers();
       showAlert("success", "Usuário excluído com sucesso!");
+      setModalOpen(false)
     } catch (error) {
       showAlert("error", error.response?.data?.error || "Erro desconhecido");
+      setModalOpen(false)
     }
   }
 
@@ -59,7 +72,7 @@ function ListUsers() {
       <TableCell align="center">{user.email}</TableCell>
       <TableCell align="center">{user.cpf}</TableCell>
       <TableCell align="center">
-        <IconButton onClick={() => deleteUser(user.id_usuario)}>
+        <IconButton onClick={() => openDeleteModal(user.id_usuario, user.name)}>
           <DeleteIcon color="error" />
         </IconButton>
       </TableCell>
@@ -78,7 +91,12 @@ function ListUsers() {
           {alert.message}
         </Alert>
       </Snackbar>
-
+      <ConfirmDelete
+      open={modalOpen}
+      userName = {userToDelete.name}
+      onConfirm={deleteUser}
+      onClose={()=> setModalOpen(false)}
+      />
       {users.length === 0 ? (
         <p> Carregando usuários... </p>
       ) : (
