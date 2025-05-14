@@ -7,6 +7,19 @@ const api = axios.create({
     }
 });
 
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+        console.log("token");
+        console.log(token);
+        if (token){
+            config.headers.Authorization = `${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
 const sheets = {
     getUsers:()=>api.get("user/"),
     postLogin:(user) => api.post("login/", user),
@@ -14,7 +27,5 @@ const sheets = {
     deleteEvento:(id) => api.delete("evento/"+id),
     getAllEventos:()=>api.get("evento/")
 }
-
-
 
 export default sheets;
